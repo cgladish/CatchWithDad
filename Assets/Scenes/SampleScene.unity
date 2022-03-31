@@ -461,9 +461,9 @@ GameObject:
   - component: {fileID: 684863625}
   - component: {fileID: 684863624}
   - component: {fileID: 684863626}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Baseball
-  m_TagString: Untagged
+  m_TagString: Ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -563,7 +563,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_InteractionLayers:
-    m_Bits: 4294967295
+    m_Bits: 2
   m_SelectMode: 0
   m_CustomReticle: {fileID: 0}
   m_FirstHoverEntered:
@@ -849,9 +849,10 @@ GameObject:
   - component: {fileID: 770014984}
   - component: {fileID: 770014983}
   - component: {fileID: 770014982}
+  - component: {fileID: 770014985}
   m_Layer: 0
   m_Name: HandLeft
-  m_TagString: Untagged
+  m_TagString: DadLeftHand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -865,7 +866,7 @@ Transform:
   m_GameObject: {fileID: 770014980}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 1421835272}
   m_RootOrder: 1
@@ -932,6 +933,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770014980}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &770014985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 770014980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 120c434460575cf419e6e93e721007aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DadBase: {fileID: 1421835271}
 --- !u!1 &790300637
 GameObject:
   m_ObjectHideFlags: 0
@@ -2101,7 +2115,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_InteractionLayers:
-    m_Bits: 4294967294
+    m_Bits: 4294967290
   m_AttachTransform: {fileID: 1525867149}
   m_KeepSelectedTargetValid: 1
   m_StartingSelectedInteractable: {fileID: 0}
@@ -2461,9 +2475,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f27c6ef2437cfec42a20396824348f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HandLeft: {fileID: 0}
-  HandRight: {fileID: 0}
-  Baseball: {fileID: 0}
+  HandLeftGameObject: {fileID: 770014980}
+  HandRightGameObject: {fileID: 2132755195}
 --- !u!1 &1430801933
 GameObject:
   m_ObjectHideFlags: 0
@@ -3045,7 +3058,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_InteractionLayers:
-    m_Bits: 4294967294
+    m_Bits: 4294967290
   m_AttachTransform: {fileID: 1007109648}
   m_KeepSelectedTargetValid: 1
   m_StartingSelectedInteractable: {fileID: 0}
@@ -3893,9 +3906,10 @@ GameObject:
   - component: {fileID: 2132755199}
   - component: {fileID: 2132755198}
   - component: {fileID: 2132755197}
+  - component: {fileID: 2132755200}
   m_Layer: 0
   m_Name: HandRight
-  m_TagString: Untagged
+  m_TagString: DadRightHand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3909,7 +3923,7 @@ Transform:
   m_GameObject: {fileID: 2132755195}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 1421835272}
   m_RootOrder: 2
@@ -3976,3 +3990,16 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2132755195}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2132755200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2132755195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8215e1d915819e4d88e0d11b61648b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DadBase: {fileID: 1421835271}
