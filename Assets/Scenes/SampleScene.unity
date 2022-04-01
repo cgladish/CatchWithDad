@@ -2475,6 +2475,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f27c6ef2437cfec42a20396824348f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  XROriginGameObject: {fileID: 790300637}
   HandLeftGameObject: {fileID: 770014980}
   HandRightGameObject: {fileID: 2132755195}
 --- !u!1 &1430801933
