@@ -12,6 +12,7 @@ public class PanelThrowSettings : MonoBehaviour
     public Text SliderThrowVelocityScaleText;
     public Slider SliderThrowAngularVelocityScale;
     public Text SliderThrowAngularVelocityScaleText;
+    public Dropdown DropdownThrowSmoothingCurve;
     public XRGrabInteractable BallXRGrabInteractable;
 
     void Start()
@@ -32,5 +33,30 @@ public class PanelThrowSettings : MonoBehaviour
 
         BallXRGrabInteractable.throwVelocityScale = SliderThrowAngularVelocityScale.value;
         SliderThrowAngularVelocityScaleText.text = "Throw Angular Velocity Scale:" + SliderThrowAngularVelocityScale.value.ToString();
+
+        switch (DropdownThrowSmoothingCurve.value) {
+            case 0: // Constant
+                BallXRGrabInteractable.throwSmoothingCurve = AnimationCurve.Constant(0, 1, 1);
+                break;
+            case 1: // Linear (Increasing)
+                BallXRGrabInteractable.throwSmoothingCurve = AnimationCurve.Linear(0, 0, 1, 1);
+                break;
+            case 2: // Linear (Decreasing)
+                BallXRGrabInteractable.throwSmoothingCurve = AnimationCurve.Linear(0, 1, 1, 0);
+                break;
+            case 3: // Exponential
+                BallXRGrabInteractable.throwSmoothingCurve = new AnimationCurve();
+                BallXRGrabInteractable.throwSmoothingCurve.AddKey(new Keyframe(0, 0, 0, 0));
+                BallXRGrabInteractable.throwSmoothingCurve.AddKey(new Keyframe(1, 1, 1, 1));
+                break;
+            case 4: // Logarithmic
+                BallXRGrabInteractable.throwSmoothingCurve = new AnimationCurve();
+                BallXRGrabInteractable.throwSmoothingCurve.AddKey(new Keyframe(0, 0, 1, 1));
+                BallXRGrabInteractable.throwSmoothingCurve.AddKey(new Keyframe(1, 1, 0, 0));
+                break;
+            default:
+                Debug.LogError("Fell through to default for DropdownThrowSmoothingCurve.value");
+                break;
+        }
     }
 }

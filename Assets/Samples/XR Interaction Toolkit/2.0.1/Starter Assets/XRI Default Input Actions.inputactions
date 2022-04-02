@@ -97,6 +97,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Reset Ball (Dev)",
+                    "type": "Button",
+                    "id": "f96effb9-eef6-472f-9d13-9ad48344b751",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -218,6 +227,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "Toggle Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3ce79f5b-30b2-404d-b7c6-62729abdc76d",
+                    "path": "<XRController>{LeftHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Reset Ball (Dev)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -635,6 +655,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Reset Ball (Dev)",
+                    "type": "Button",
+                    "id": "2f7647a9-e27b-4483-8b10-5219d898ee8d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -756,6 +785,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "Toggle Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e885331a-fda6-4cfc-b8a3-3a97ae96023f",
+                    "path": "<XRController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "Reset Ball (Dev)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
