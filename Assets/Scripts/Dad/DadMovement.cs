@@ -51,7 +51,6 @@ public class DadMovement : MonoBehaviour
             if (HandsAreAtInitialPositions()) {
                 TossBallToPlayer();
             } else {
-                Debug.Log("moving hands towards initial positions");
                 MoveHandsTowardsInitialPositions();
                 if (isBallInLeftHand) {
                     BallGameObject.transform.position = HandLeftGameObject.transform.position;
@@ -63,11 +62,8 @@ public class DadMovement : MonoBehaviour
             if (BallGameObject.GetComponent<BallGrabHandler>().inFlightAfterPlayerThrow) {
                 Vector3? ballDestination = CalculateBallDestination();
                 if (ballDestination.HasValue) {
-                    gameObject.transform.position = Vector3.MoveTowards(
-                        gameObject.transform.position,
-                        ballDestination.Value,
-                        Time.deltaTime * DAD_MOVE_SPEED
-                    );
+                    HandLeftGameObject.transform.position = ballDestination.Value;
+                    HandRightGameObject.transform.position = ballDestination.Value;
                 }
             }
         }
@@ -122,24 +118,34 @@ public class DadMovement : MonoBehaviour
         Vector3 ballPosition = BallGameObject.transform.position;
         Vector3 ballVelocity = BallGameObject.GetComponent<Rigidbody>().velocity;
 
-        float endHeight = 0; // CHANGE THIS TO DAD HAND HEIGHT
-        float heightDifference = ballPosition.y - endHeight;
-        float timeToDestination = ( // Quadratic equation time
-            (
-                -ballVelocity.y
-                - Mathf.Sqrt(Mathf.Pow(ballVelocity.y, 2) - 2 * Physics.gravity.y * heightDifference)
-            )
-            / Physics.gravity.y
+        // Calculate intersection point of horizontal direction and catch plane
+        Vector3 ballVelocityHorizontal = new Vector3(ballVelocity.x, 0, ballVelocity.z);
+        Plane catchPlane = new Plane(
+            gameObject.transform.forward,
+            INITIAL_HAND_POSITION_LEFT + gameObject.transform.position
         );
-        if (!float.IsNaN(timeToDestination)) {
-            return new Vector3(
-                ballPosition.x + (ballVelocity.x * timeToDestination),
-                endHeight,
-                ballPosition.z + (ballVelocity.z * timeToDestination)
-            );
+        Ray ballRay = new Ray(ballPosition, ballVelocityHorizontal);
+        float intersectionDistance;
+        Vector3 ballDestinationHorizontal;
+        if (catchPlane.Raycast(ballRay, out intersectionDistance)) {
+            ballDestinationHorizontal = ballRay.GetPoint(intersectionDistance);
         } else {
             return null;
         }
+
+        // Parabola equation
+        float timeToDestination = intersectionDistance / ballVelocityHorizontal.magnitude;
+        float endHeight = (
+            ballPosition.y
+            + (ballVelocity.y * timeToDestination)
+            + (Physics.gravity.y * Mathf.Pow(timeToDestination, 2) / 2)
+        );
+
+        return new Vector3(
+            ballDestinationHorizontal.x,
+            endHeight,
+            ballDestinationHorizontal.z
+        );
     }
 
     private bool HandsAreAtInitialPositions() {
