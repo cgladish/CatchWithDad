@@ -28,6 +28,7 @@ public class DadMovement : MonoBehaviour
     private const float MIN_THROW_ANGLE_DEGREES = 30.0f;
     private const float MAX_THROW_ANGLE_DEGREES = 60.0f;
     private const float BALL_RELEASE_TIMEOUT_SECONDS = 1.0f;
+    private const float DAD_MOVE_SPEED = 2.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -55,7 +56,11 @@ public class DadMovement : MonoBehaviour
             if (!BallGameObject.GetComponent<BallGrabHandler>().isHeldByPlayer) {
                 Vector3? ballDestination = CalculateBallDestination();
                 if (ballDestination.HasValue) {
-                    gameObject.transform.position = ballDestination.Value;
+                    gameObject.transform.position = Vector3.MoveTowards(
+                        gameObject.transform.position,
+                        ballDestination.Value,
+                        Time.deltaTime * DAD_MOVE_SPEED
+                    );
                 }
             }
         }
@@ -115,7 +120,7 @@ public class DadMovement : MonoBehaviour
         float timeToDestination = ( // Quadratic equation time
             (
                 -ballVelocity.y
-                + Mathf.Sqrt(Mathf.Pow(ballVelocity.y, 2) - 2 * Physics.gravity.y * heightDifference)
+                - Mathf.Sqrt(Mathf.Pow(ballVelocity.y, 2) - 2 * Physics.gravity.y * heightDifference)
             )
             / Physics.gravity.y
         );
