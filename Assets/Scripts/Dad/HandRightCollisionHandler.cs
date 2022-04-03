@@ -20,7 +20,7 @@ public class HandRightCollisionHandler : MonoBehaviour
 
     void OnTriggerEnter(Collider collider) {
         if (collider.gameObject.tag == Constants.TAG_BALL) {
-            DadBase.GetComponent<DadHandMovement>().OnHandCollision(collider.gameObject, false);
+            DadBase.GetComponent<DadMovement>().OnHandCollision(collider.gameObject, false);
         }
     }
 }

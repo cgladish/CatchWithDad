@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DadHandMovement : MonoBehaviour
+public class DadMovement : MonoBehaviour
 {
     public GameObject XROriginGameObject;
     public GameObject HandLeftGameObject;
     public GameObject HandRightGameObject;
+    public GameObject BallGameObject;
 
-    private GameObject HeldBallGameObject;
+    private bool isHoldingBall;
     private bool isBallInLeftHand;
     private float lastBallReleaseTime;
 
@@ -37,17 +38,24 @@ public class DadHandMovement : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        if (HeldBallGameObject != null) {
+    {            
+        if (isHoldingBall) {
             if (HandsAreAtInitialPositions()) {
                 TossBallToPlayer();
             } else {
                 Debug.Log("moving hadns towards initial positions");
                 MoveHandsTowardsInitialPositions();
                 if (isBallInLeftHand) {
-                    HeldBallGameObject.transform.position = HandLeftGameObject.transform.position;
+                    BallGameObject.transform.position = HandLeftGameObject.transform.position;
                 } else {
-                    HeldBallGameObject.transform.position = HandRightGameObject.transform.position;
+                    BallGameObject.transform.position = HandRightGameObject.transform.position;
+                }
+            }
+        } else {
+            if (!BallGameObject.GetComponent<BallGrabHandler>().isHeldByPlayer) {
+                Vector3? ballDestination = CalculateBallDestination();
+                if (ballDestination.HasValue) {
+                    gameObject.transform.position = ballDestination.Value;
                 }
             }
         }
@@ -56,7 +64,7 @@ public class DadHandMovement : MonoBehaviour
     public void OnHandCollision(GameObject ballObject, bool isLeftHand) {
         Debug.Log("Ball collided with dad hand");
         if (Time.time - lastBallReleaseTime > BALL_RELEASE_TIMEOUT_SECONDS) {
-            HeldBallGameObject = ballObject;
+            isHoldingBall = true;
             isBallInLeftHand = isLeftHand;
             ballObject.GetComponent<BallGrabHandler>().OnDadGrab();
         }
@@ -64,15 +72,15 @@ public class DadHandMovement : MonoBehaviour
 
     private void TossBallToPlayer() {
         Debug.Log("Tossing ball to player");
-        HeldBallGameObject.GetComponent<BallGrabHandler>().OnDadGrabRelease();
-        HeldBallGameObject.GetComponent<Rigidbody>().velocity = CalculateThrowVector();
-        HeldBallGameObject = null;
+        BallGameObject.GetComponent<BallGrabHandler>().OnDadGrabRelease();
+        BallGameObject.GetComponent<Rigidbody>().velocity = CalculateThrowVector();
+        isHoldingBall = false;
         lastBallReleaseTime = Time.time;
     }
 
     private Vector3 CalculateThrowVector() {  
         Vector3 playerPosition = XROriginGameObject.transform.position;
-        Vector3 ballPosition = HeldBallGameObject.transform.position;
+        Vector3 ballPosition = BallGameObject.transform.position;
         Vector3 horizontalPlayerPosition = new Vector3(playerPosition.x, 0, playerPosition.z);
         Vector3 horizontalBallPosition = new Vector3(ballPosition.x, 0, ballPosition.z);
  
@@ -96,6 +104,30 @@ public class DadHandMovement : MonoBehaviour
  
         float angleBetweenObjects = Vector3.Angle(Vector3.forward, horizontalPlayerPosition - horizontalBallPosition);
         return Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocityUnangled;
+    }
+
+    private Vector3? CalculateBallDestination() {
+        Vector3 ballPosition = BallGameObject.transform.position;
+        Vector3 ballVelocity = BallGameObject.GetComponent<Rigidbody>().velocity;
+
+        float endHeight = 0; // CHANGE THIS TO DAD HAND HEIGHT
+        float heightDifference = ballPosition.y - endHeight;
+        float timeToDestination = ( // Quadratic equation time
+            (
+                -ballVelocity.y
+                + Mathf.Sqrt(Mathf.Pow(ballVelocity.y, 2) - 2 * Physics.gravity.y * heightDifference)
+            )
+            / Physics.gravity.y
+        );
+        if (!float.IsNaN(timeToDestination)) {
+            return new Vector3(
+                ballPosition.x + (ballVelocity.x * timeToDestination),
+                endHeight,
+                ballPosition.z + (ballVelocity.z * timeToDestination)
+            );
+        } else {
+            return null;
+        }
     }
 
     private bool HandsAreAtInitialPositions() {

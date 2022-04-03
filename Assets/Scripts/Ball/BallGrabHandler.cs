@@ -5,6 +5,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class BallGrabHandler : MonoBehaviour
 {
+    public bool isHeldByPlayer = false;
+
     private XRGrabInteractable m_XRGrabInteractable;
     private Rigidbody m_Rigidbody;
 
@@ -20,6 +22,14 @@ public class BallGrabHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void OnSelectEntered() {
+        isHeldByPlayer = true;
+    }
+
+    public void OnSelectExited() {
+        isHeldByPlayer = false;
     }
 
     public void OnDadGrab() { 
