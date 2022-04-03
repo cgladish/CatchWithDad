@@ -16,19 +16,20 @@ public class DadMovement : MonoBehaviour
     private const float MAX_HAND_DISTANCE = 0.5f;
     private readonly Vector3 INITIAL_HAND_POSITION_LEFT = new Vector3(
         -0.25f, 
-        0.3f, 
-        0.0f
+        0.0f, 
+        0.25f
     );
     private readonly Vector3 INITIAL_HAND_POSITION_RIGHT = new Vector3(
         0.25f, 
-        0.3f, 
-        0.0f
+        0.0f, 
+        0.25f
     );
     private const float MAX_HAND_DISTANCE_PER_SECOND = 0.5f;
     private const float MIN_THROW_ANGLE_DEGREES = 30.0f;
     private const float MAX_THROW_ANGLE_DEGREES = 60.0f;
     private const float BALL_RELEASE_TIMEOUT_SECONDS = 1.0f;
     private const float DAD_MOVE_SPEED = 2.0f;
+    private const float DAD_ROTATE_SPEED = 30f;
 
     // Start is called before the first frame update
     void Start()
@@ -39,12 +40,18 @@ public class DadMovement : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {            
+    {
+        Vector3 directionFromDadToPlayer = (XROriginGameObject.transform.position - gameObject.transform.position).normalized;
+        gameObject.transform.rotation = Quaternion.RotateTowards(
+            gameObject.transform.rotation,
+            Quaternion.LookRotation(new Vector3(directionFromDadToPlayer.x, 0, directionFromDadToPlayer.z)),
+            DAD_ROTATE_SPEED * Time.deltaTime
+        );
         if (isHoldingBall) {
             if (HandsAreAtInitialPositions()) {
                 TossBallToPlayer();
             } else {
-                Debug.Log("moving hadns towards initial positions");
+                Debug.Log("moving hands towards initial positions");
                 MoveHandsTowardsInitialPositions();
                 if (isBallInLeftHand) {
                     BallGameObject.transform.position = HandLeftGameObject.transform.position;
@@ -53,7 +60,7 @@ public class DadMovement : MonoBehaviour
                 }
             }
         } else {
-            if (!BallGameObject.GetComponent<BallGrabHandler>().isHeldByPlayer) {
+            if (BallGameObject.GetComponent<BallGrabHandler>().inFlightAfterPlayerThrow) {
                 Vector3? ballDestination = CalculateBallDestination();
                 if (ballDestination.HasValue) {
                     gameObject.transform.position = Vector3.MoveTowards(

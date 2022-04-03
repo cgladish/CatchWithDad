@@ -9,6 +9,7 @@ TagManager:
   - Ball
   - DadRightHand
   - DadLeftHand
+  - Floor
   layers:
   - Default
   - TransparentFX

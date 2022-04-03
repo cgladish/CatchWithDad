@@ -5,7 +5,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class BallGrabHandler : MonoBehaviour
 {
-    public bool isHeldByPlayer = false;
+    public bool inFlightAfterPlayerThrow = false;
 
     private XRGrabInteractable m_XRGrabInteractable;
     private Rigidbody m_Rigidbody;
@@ -25,14 +25,24 @@ public class BallGrabHandler : MonoBehaviour
     }
 
     public void OnSelectEntered() {
-        isHeldByPlayer = true;
+        inFlightAfterPlayerThrow = false;
     }
 
     public void OnSelectExited() {
-        isHeldByPlayer = false;
+        inFlightAfterPlayerThrow = true;
     }
 
-    public void OnDadGrab() { 
+    public void OnCollisionEnter(Collision collision) {
+        if (
+            collision.gameObject.tag != Constants.TAG_CONTROLLER_LEFT_HAND
+            && collision.gameObject.tag != Constants.TAG_CONTROLLER_RIGHT_HAND
+        ) {
+            inFlightAfterPlayerThrow = false;
+        }
+    }
+
+    public void OnDadGrab() {
+        inFlightAfterPlayerThrow = false;
         m_XRGrabInteractable.enabled = false;
         m_Rigidbody.isKinematic = true;
         gameObject.layer = Constants.LAYER_BALL_IN_HAND;
