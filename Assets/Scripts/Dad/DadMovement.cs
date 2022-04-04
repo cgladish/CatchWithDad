@@ -13,7 +13,7 @@ public class DadMovement : MonoBehaviour
     private bool isBallInLeftHand;
     private float lastBallReleaseTime;
 
-    private const float MAX_HAND_DISTANCE = 0.5f;
+    private const float MAX_HAND_DISTANCE = 1.0f;
     private readonly Vector3 INITIAL_HAND_POSITION_LEFT = new Vector3(
         -0.25f, 
         0.0f, 
@@ -24,7 +24,7 @@ public class DadMovement : MonoBehaviour
         0.0f, 
         0.25f
     );
-    private const float MAX_HAND_DISTANCE_PER_SECOND = 0.5f;
+    private const float MAX_HAND_DISTANCE_PER_SECOND = 1.0f;
     private const float MIN_THROW_ANGLE_DEGREES = 30.0f;
     private const float MAX_THROW_ANGLE_DEGREES = 60.0f;
     private const float BALL_RELEASE_TIMEOUT_SECONDS = 1.0f;
@@ -47,30 +47,44 @@ public class DadMovement : MonoBehaviour
             Quaternion.LookRotation(new Vector3(directionFromDadToPlayer.x, 0, directionFromDadToPlayer.z)),
             DAD_ROTATE_SPEED * Time.deltaTime
         );
-        if (isHoldingBall) {
-            if (HandsAreAtInitialPositions()) {
-                TossBallToPlayer();
-            } else {
-                MoveHandsTowardsInitialPositions();
-                if (isBallInLeftHand) {
-                    BallGameObject.transform.position = HandLeftGameObject.transform.position;
+        if (BallGameObject.GetComponent<BallGrabHandler>().inFlightAfterPlayerThrow) {
+            Vector3? ballDestination = CalculateBallDestination();
+            if (ballDestination.HasValue) {
+                float distanceFromLeftHandToDestination = Vector3.Distance(
+                    ballDestination.Value,
+                    HandLeftGameObject.transform.position
+                );
+                float distanceFromRightHandToDestination = Vector3.Distance(
+                    ballDestination.Value,
+                    HandRightGameObject.transform.position
+                );
+                if (distanceFromLeftHandToDestination < distanceFromRightHandToDestination) {
+                    if (distanceFromLeftHandToDestination <= MAX_HAND_DISTANCE) {
+                        MoveLeftHandTowardsPosition(ballDestination.Value);
+                    }
                 } else {
-                    BallGameObject.transform.position = HandRightGameObject.transform.position;
+                    if (distanceFromRightHandToDestination <= MAX_HAND_DISTANCE) {
+                        MoveRightHandTowardsPosition(ballDestination.Value);
+                    }
                 }
             }
         } else {
-            if (BallGameObject.GetComponent<BallGrabHandler>().inFlightAfterPlayerThrow) {
-                Vector3? ballDestination = CalculateBallDestination();
-                if (ballDestination.HasValue) {
-                    HandLeftGameObject.transform.position = ballDestination.Value;
-                    HandRightGameObject.transform.position = ballDestination.Value;
+            MoveHandsTowardsInitialPositions();
+            if (isHoldingBall) {
+                if (HandsAreAtInitialPositions()) {
+                    TossBallToPlayer();
+                } else {
+                    if (isBallInLeftHand) {
+                        BallGameObject.transform.position = HandLeftGameObject.transform.position;
+                    } else {
+                        BallGameObject.transform.position = HandRightGameObject.transform.position;
+                    }
                 }
             }
         }
     }
 
     public void OnHandCollision(GameObject ballObject, bool isLeftHand) {
-        Debug.Log("Ball collided with dad hand");
         if (Time.time - lastBallReleaseTime > BALL_RELEASE_TIMEOUT_SECONDS) {
             isHoldingBall = true;
             isBallInLeftHand = isLeftHand;
@@ -79,7 +93,6 @@ public class DadMovement : MonoBehaviour
     }
 
     private void TossBallToPlayer() {
-        Debug.Log("Tossing ball to player");
         BallGameObject.GetComponent<BallGrabHandler>().OnDadGrabRelease();
         BallGameObject.GetComponent<Rigidbody>().velocity = CalculateThrowVector();
         isHoldingBall = false;
@@ -122,7 +135,7 @@ public class DadMovement : MonoBehaviour
         Vector3 ballVelocityHorizontal = new Vector3(ballVelocity.x, 0, ballVelocity.z);
         Plane catchPlane = new Plane(
             gameObject.transform.forward,
-            INITIAL_HAND_POSITION_LEFT + gameObject.transform.position
+            gameObject.transform.TransformPoint(INITIAL_HAND_POSITION_LEFT)
         );
         Ray ballRay = new Ray(ballPosition, ballVelocityHorizontal);
         float intersectionDistance;
@@ -177,6 +190,34 @@ public class DadMovement : MonoBehaviour
         HandRightGameObject.transform.localPosition = Vector3.MoveTowards(
             HandRightGameObject.transform.localPosition,
             INITIAL_HAND_POSITION_RIGHT,
+            maxHandDistance
+        );
+    }
+
+    private void MoveLeftHandTowardsPosition(Vector3 position) {
+        float maxHandDistance = MAX_HAND_DISTANCE_PER_SECOND * Time.deltaTime;
+        HandLeftGameObject.transform.position = Vector3.MoveTowards(
+            HandLeftGameObject.transform.position,
+            position,
+            maxHandDistance
+        );
+        HandRightGameObject.transform.localPosition = Vector3.MoveTowards(
+            HandRightGameObject.transform.localPosition,
+            INITIAL_HAND_POSITION_RIGHT,
+            maxHandDistance
+        );
+    }
+
+    private void MoveRightHandTowardsPosition(Vector3 position) {
+        float maxHandDistance = MAX_HAND_DISTANCE_PER_SECOND * Time.deltaTime;
+        HandLeftGameObject.transform.localPosition = Vector3.MoveTowards(
+            HandLeftGameObject.transform.localPosition,
+            INITIAL_HAND_POSITION_LEFT,
+            maxHandDistance
+        );
+        HandRightGameObject.transform.position = Vector3.MoveTowards(
+            HandRightGameObject.transform.position,
+            position,
             maxHandDistance
         );
     }
