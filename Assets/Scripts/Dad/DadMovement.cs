@@ -107,24 +107,19 @@ public class DadMovement : MonoBehaviour
  
         float horizontalDistance = Vector3.Distance(horizontalPlayerPosition, horizontalBallPosition);
         float heightDifference = ballPosition.y - playerPosition.y;
- 
-        float throwAngle = Random.Range(MIN_THROW_ANGLE_DEGREES, MAX_THROW_ANGLE_DEGREES) * Mathf.Deg2Rad;
+        float verticalToHorizontalVelocityRatio = Random.Range(0.7f, 1.3f);
 
-        float velocityMagnitude = (
-            (1 / Mathf.Cos(throwAngle))
-            * Mathf.Sqrt(
-                (0.5f *  Physics.gravity.magnitude * Mathf.Pow(horizontalDistance, 2))
-                / (horizontalDistance * Mathf.Tan(throwAngle) + heightDifference)
-            )
+        float horizontalVelocityMagnitude = horizontalDistance * Mathf.Sqrt(
+            Physics.gravity.y
+            / (2 * (heightDifference - verticalToHorizontalVelocityRatio * horizontalDistance))
         );
-        Vector3 velocityUnangled = new Vector3(
-            0,
-            velocityMagnitude * Mathf.Sin(throwAngle),
-            velocityMagnitude * Mathf.Cos(throwAngle)
-        );
- 
-        float angleBetweenObjects = Vector3.Angle(Vector3.forward, horizontalPlayerPosition - horizontalBallPosition);
-        return Quaternion.AngleAxis(angleBetweenObjects, Vector3.up) * velocityUnangled;
+        Vector3 horizontalThrowDirection = (horizontalPlayerPosition - horizontalBallPosition).normalized;
+
+        return new Vector3(
+            horizontalThrowDirection.x,
+            verticalToHorizontalVelocityRatio,
+            horizontalThrowDirection.z
+        ) * horizontalVelocityMagnitude;
     }
 
     private Vector3? CalculateBallDestination() {
