@@ -7,6 +7,7 @@ public class TerrainDetails : MonoBehaviour
     private Terrain m_Terrain;
     private float terrainWidthToDetailsWidthRatio;
     private float terrainHeightToDetailsHeightRatio;
+    private Vector2 centerOfTerrain;
 
     // Start is called before the first frame update
     void Start()
@@ -15,11 +16,12 @@ public class TerrainDetails : MonoBehaviour
         Vector3 terrainSize = m_Terrain.terrainData.size;
         terrainWidthToDetailsWidthRatio = terrainSize.x / m_Terrain.terrainData.detailWidth;
         terrainHeightToDetailsHeightRatio = terrainSize.z / m_Terrain.terrainData.detailHeight;
-        SetDensity(0, 100, 0);
-        SetDensity(1, 100, 0);
-        /* SetDensity(2, 0, 100);
-        SetDensity(3, 0, 100);
-        SetDensity(4, 0, 100); */
+        centerOfTerrain = new Vector2(terrainSize.x / 2, terrainSize.z / 2);
+        SetDensity(0, 50, 0);
+        SetDensity(1, 50, 0);
+        SetDensity(2, 0, 50);
+        SetDensity(3, 0, 50);
+        SetDensity(4, 0, 50);
     }
 
     // Update is called once per frame
@@ -29,11 +31,9 @@ public class TerrainDetails : MonoBehaviour
     }
 
     void OnApplicationQuit() {
-        SetDensity(0, 0, 0);
-        SetDensity(1, 0, 0);
-        SetDensity(2, 0, 0);
-        SetDensity(3, 0, 0);
-        SetDensity(4, 0, 0);
+        for (int layerIndex = 0; layerIndex < m_Terrain.terrainData.detailPrototypes.Length; layerIndex++) {
+            SetDensity(layerIndex, 0, 0);
+        }
     }
 
     private void SetDensity(int layerIndex, int densityWithinBoundaries, int densityOutsideBoundaries) {
@@ -47,7 +47,7 @@ public class TerrainDetails : MonoBehaviour
         for (int x = 0; x < m_Terrain.terrainData.detailWidth; x++) {
             for (int y = 0; y < m_Terrain.terrainData.detailHeight; y++) {
                 Vector2 location = new Vector2(x * terrainWidthToDetailsWidthRatio, y * terrainHeightToDetailsHeightRatio);
-                if (Vector2.Distance(location, Vector2.zero) > TerrainWall.WALL_RADIUS) {
+                if (Vector2.Distance(location, centerOfTerrain) > TerrainWall.WALL_RADIUS) {
                     detailLayer[x, y] = densityOutsideBoundaries;
                 } else {
                     detailLayer[x, y] = densityWithinBoundaries;
