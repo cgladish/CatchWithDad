@@ -7,7 +7,7 @@ public class TerrainWall : MonoBehaviour
     public GameObject XROriginGameObject;
     public GameObject BallGameObject;
 
-    public const float WALL_RADIUS = 50;
+    public const float WALL_RADIUS = 25;
 
     // Start is called before the first frame update
     void Start()

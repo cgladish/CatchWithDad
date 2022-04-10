@@ -13,18 +13,18 @@ public class DadMovement : MonoBehaviour
     private bool isBallInLeftHand;
     private float lastBallReleaseTime;
 
-    private const float MAX_HAND_DISTANCE = 1.0f;
+    private const float MAX_HAND_DISTANCE = 1.5f;
     private readonly Vector3 INITIAL_HAND_POSITION_LEFT = new Vector3(
-        -0.25f, 
+        -0.5f, 
         0.0f, 
-        0.25f
+        0.5f
     );
     private readonly Vector3 INITIAL_HAND_POSITION_RIGHT = new Vector3(
-        0.25f, 
+        0.5f, 
         0.0f, 
-        0.25f
+        0.5f
     );
-    private const float MAX_HAND_DISTANCE_PER_SECOND = 1.0f;
+    private const float MAX_HAND_DISTANCE_PER_SECOND = 2.0f;
     private const float MIN_THROW_ANGLE_DEGREES = 30.0f;
     private const float MAX_THROW_ANGLE_DEGREES = 60.0f;
     private const float BALL_RELEASE_TIMEOUT_SECONDS = 1.0f;

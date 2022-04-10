@@ -17,11 +17,11 @@ public class TerrainDetails : MonoBehaviour
         terrainWidthToDetailsWidthRatio = terrainSize.x / m_Terrain.terrainData.detailWidth;
         terrainHeightToDetailsHeightRatio = terrainSize.z / m_Terrain.terrainData.detailHeight;
         centerOfTerrain = new Vector2(terrainSize.x / 2, terrainSize.z / 2);
-        SetDensity(0, 50, 0);
-        SetDensity(1, 50, 0);
-        SetDensity(2, 0, 50);
-        SetDensity(3, 0, 50);
-        SetDensity(4, 0, 50);
+        SetDensity(0, 1000, 0);
+        SetDensity(1, 1000, 0);
+        SetDensity(2, 0, 1);
+        SetDensity(3, 0, 1);
+        SetDensity(4, 0, 1);
     }
 
     // Update is called once per frame
